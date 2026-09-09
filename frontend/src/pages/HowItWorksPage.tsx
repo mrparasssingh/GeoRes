@@ -2,45 +2,42 @@ import { Link } from 'react-router-dom'
 import { ArrowDown, Zap, Database, Server, Code2 } from 'lucide-react'
 
 const pipelineSteps = [
-  { label: 'Satellite Image Input', sub: 'GeoTIFF (Sentinel-2 10 m) · PNG · JPG' },
-  { label: 'Metadata Extraction', sub: 'CRS · EPSG · Band info via Rasterio / GDAL' },
-  { label: '512×512 Overlapping Tiles', sub: 'Tiling with configurable stride and overlap' },
-  { label: 'SwinIR AI Enhancement', sub: 'Transformer-based deep learning super-resolution' },
-  { label: '4× Super Resolution', sub: 'Each tile upscaled from ~512 → ~2048 px' },
-  { label: 'Gaussian Weighted Seam-Free Reconstruction', sub: 'Weighted blending eliminates tile seam artifacts' },
-  { label: 'Enhanced GeoTIFF Output', sub: 'Metadata re-attached · CRS preserved' },
-  { label: 'Interactive Comparison', sub: 'Before / after slider · zoom · download' },
+  { label: 'Satellite Image Input', sub: 'GeoTIFF · PNG · JPG decoded via Pillow' },
+  { label: 'Bicubic Upscaling', sub: 'Upsamples image to target spatial dimensions' },
+  { label: 'SRCNN Inference', sub: 'Applies a 3-layer CNN to sharpen the bicubic-upsampled image' },
+  { label: 'Tensor Clamping & Format Export', sub: 'Clamps values to [0, 1] and writes PNG / TIFF' },
+  { label: 'Interactive Comparison', sub: 'Before / after comparison slider and download' },
 ]
 
 const techCards = [
   {
-    name: 'SwinIR',
+    name: 'SRCNN (Super-Resolution CNN)',
     icon: <Zap size={20} style={{ color: '#0d9490' }} />,
-    desc: 'Swin Transformer-based image restoration and super-resolution. Used as the core deep learning model for enhancing spatial detail.',
-    status: 'Core Model',
+    desc: 'Three-layer convolutional neural network (Dong et al.) implemented in PyTorch with AMP. Applies 9×9 and 5×5 filters to refine upsampled satellite imagery.',
+    status: 'Active Model',
     statusColor: '#0d9490',
   },
   {
-    name: 'GDAL + Rasterio',
+    name: 'Pillow & NumPy',
     icon: <Database size={20} style={{ color: '#0d9490' }} />,
-    desc: 'Geospatial raster processing libraries. Handle GeoTIFF I/O, CRS/EPSG metadata extraction and preservation throughout the pipeline.',
-    status: 'Geospatial Layer',
+    desc: 'Raster I/O and tensor manipulation libraries. Handle RGB image decoding, array normalization to [0, 1], and TIFF export.',
+    status: 'Image Pipeline',
     statusColor: '#0d9490',
   },
   {
-    name: 'FastAPI',
+    name: 'Python ThreadingHTTPServer',
     icon: <Server size={20} style={{ color: '#0d9490' }} />,
-    desc: 'High-performance Python API backend. Serves the enhancement API endpoints and manages Celery job queuing for large images.',
-    status: 'Planned Backend',
-    statusColor: '#d97706',
+    desc: 'Standard library multithreaded HTTP server serving REST endpoints for image enhancement, job polling, and direct binary downloads.',
+    status: 'Active Backend',
+    statusColor: '#0d9490',
   },
 ]
 
 const stackItems = [
-  { group: 'AI / Model', items: ['Python', 'PyTorch', 'SwinIR', 'Real-ESRGAN (planned)', 'OpenCV'], color: '#0d9490' },
-  { group: 'Geospatial', items: ['GDAL', 'Rasterio', 'GeoPandas'], color: '#1e2461' },
-  { group: 'Backend', items: ['FastAPI', 'Celery', 'Redis', 'Docker', 'CUDA (GPU)'], color: '#7c3aed' },
-  { group: 'Frontend', items: ['React', 'TypeScript', 'Vite', 'Leaflet / OpenLayers'], color: '#0f1233' },
+  { group: 'AI / Model', items: ['Python', 'PyTorch', 'SRCNN', 'CUDA 12.6', 'Torchvision'], color: '#0d9490' },
+  { group: 'Image I/O', items: ['Pillow', 'NumPy', 'GeoTIFF / PNG / JPEG'], color: '#1e2461' },
+  { group: 'Backend', items: ['Python http.server', 'ThreadingHTTPServer', 'REST API'], color: '#7c3aed' },
+  { group: 'Frontend', items: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Leaflet'], color: '#0f1233' },
 ]
 
 export default function HowItWorksPage() {
@@ -165,7 +162,7 @@ export default function HowItWorksPage() {
         <section className="mb-12">
           <p className="section-label text-center mb-6">Backend API Architecture</p>
           <div className="card p-6">
-            <p className="text-sm font-semibold mb-4" style={{ color: '#0f1233' }}>FastAPI Endpoints</p>
+            <p className="text-sm font-semibold mb-4" style={{ color: '#0f1233' }}>REST API Endpoints</p>
             <div className="flex flex-col gap-3">
               {[
                 { method: 'POST', path: '/api/enhance', desc: 'Submit an image for enhancement — returns a job ID' },

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "geores"
 version = "0.1.0"
-description = "GeoRes - Geospatial Land Use and Land Cover Classification Pipeline for SIH 2026"
+description = "GeoRes - Satellite Image Super-Resolution and Enhancement Pipeline"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
@@ -16,9 +16,12 @@ dependencies = [
     "torchvision>=0.15.0",
     "scikit-learn>=1.2.0",
     "pillow>=9.0.0",
-    "kaggle>=1.5.0",
     "matplotlib>=3.6.0"
 ]
+
+[project.optional-dependencies]
+data = ["kaggle>=1.6.0"]
+test = ["pytest>=8.0.0"]
 
 [project.scripts]
 geores-train = "src.train:main"
@@ -28,3 +31,7 @@ geores-predict = "src.predict:main"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = [".venv", "data", "frontend", "static"]

@@ -18,7 +18,7 @@ export default function EnhancePage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [objectUrl, setObjectUrl] = useState<string | null>(null)  // always set for uploaded files
   const [scale] = useState(4)
-  const [model] = useState('SwinIR')
+  const [model] = useState('SRCNN')
   const [channels, setChannels] = useState<'RGB' | 'RGB + NIR'>('RGB')
 
   // Navigate to results when complete
@@ -101,7 +101,7 @@ export default function EnhancePage() {
             Enhance Satellite Image
           </h1>
           <p className="text-base" style={{ color: '#6b7280' }}>
-            Upload a medium-resolution satellite image to generate an enhanced high-detail version using SwinIR.
+            Upload a medium-resolution satellite image to generate an enhanced version using the SRCNN deep learning model.
           </p>
         </div>
 
@@ -213,7 +213,7 @@ export default function EnhancePage() {
                     className="flex items-center justify-between px-4 py-3 rounded-xl font-semibold text-sm"
                     style={{ background: '#f0f4ff', color: '#0f1233' }}
                   >
-                    SwinIR
+                    SRCNN
                     <span className="badge badge-teal">Active</span>
                   </div>
                 </div>

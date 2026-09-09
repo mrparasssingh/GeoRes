@@ -17,7 +17,7 @@ const features = [
   {
     icon: <Zap size={22} style={{ color: '#0d9490' }} />,
     title: '4× Spatial Enhancement',
-    desc: 'Upscale medium-resolution imagery by 4× using SwinIR deep learning, revealing fine spatial details invisible at the original resolution.',
+    desc: 'Upscale medium-resolution imagery by 4× using an SRCNN 3-layer convolutional network trained on EuroSAT satellite imagery.',
   },
   {
     icon: <Database size={22} style={{ color: '#0d9490' }} />,
@@ -26,8 +26,8 @@ const features = [
   },
   {
     icon: <Layers size={22} style={{ color: '#0d9490' }} />,
-    title: 'Seam-Free Reconstruction',
-    desc: 'Gaussian-weighted blending of overlapping 512×512 tiles eliminates seam artifacts and ensures a continuous, seamless output.',
+    title: 'Convolutional Sharpening',
+    desc: 'Applies a 3-layer CNN to sharpen the bicubic-upsampled image directly without tiling artifacts.',
   },
 ]
 
@@ -173,7 +173,7 @@ export default function HomePage() {
             >
               <MapPin size={12} className="text-teal-400" />
               <span className="text-xs font-mono text-white/70">India Region · EPSG:4326</span>
-              <span className="text-xs font-mono text-white/40 ml-auto">SwinIR Enhancement Ready</span>
+              <span className="text-xs font-mono text-white/40 ml-auto">SRCNN Enhancement Ready</span>
             </div>
           </div>
         </div>

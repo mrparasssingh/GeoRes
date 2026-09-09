@@ -210,7 +210,7 @@ export default function ResultsPage() {
                 {isDemo && (
                   <p className="text-xs leading-relaxed" style={{ color: '#9ca3af' }}>
                     In demo mode, GeoTIFF download provides the sample PNG with a .tif extension.
-                    Real GeoTIFF output requires the live FastAPI backend.
+                    Real GeoTIFF output requires the live PyTorch backend.
                   </p>
                 )}
               </div>
@@ -234,8 +234,8 @@ export default function ResultsPage() {
                 {[
                   { label: 'Scale', value: '4×' },
                   { label: 'Model', value: job?.model ?? 'SRCNN' },
-                  { label: 'Tile Size', value: '512 px' },
-                  { label: 'Blend', value: 'Gaussian' },
+                  { label: 'Architecture', value: '3-Layer CNN' },
+                  { label: 'Processing', value: 'Bicubic + SR' },
                 ].map(({ label, value }) => (
                   <div key={label} className="rounded-xl p-3 text-center" style={{ background: '#f0f4ff' }}>
                     <p className="text-xs mb-1" style={{ color: '#9ca3af' }}>{label}</p>

@@ -6,6 +6,11 @@ torch>=2.14.0
 torchvision>=0.29.0
 scikit-learn>=1.4.0
 pillow>=10.0.0
-kaggle>=1.6.0
 matplotlib>=3.8.0
 numpy>=1.26.0
+
+# Optional / Data Ingestion (only needed to download EuroSAT dataset from Kaggle)
+# kaggle>=1.6.0
+
+# Development / Testing
+pytest>=8.0.0

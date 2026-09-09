@@ -1,6 +1,6 @@
 /**
  * Real API service — used when DEMO_MODE = false.
- * Connect to FastAPI backend at API_BASE_URL.
+ * Connect to PyTorch HTTP backend at API_BASE_URL.
  */
 import { API_BASE_URL } from '../utils/constants'
 import type { EnhancementJob, EnhancementOptions } from './mockApi'

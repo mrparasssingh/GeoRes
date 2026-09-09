@@ -94,3 +94,11 @@ Concrete commands to run and expected output, checked before any change counts a
 - [x] Full UI Browser Download Trigger:
   - Automated browser test confirmed clicking "Download PNG" and "Download GeoTIFF" on `/results` triggers direct attachment downloads with 0 errors.
 
+## Phase 6: Codebase Remediation & Test Suite
+- [x] Verify Frontend Build Integrity:
+  - Command: `npm run build` (in `frontend/`)
+  - Actual Result: `tsc -b && vite build` passed in 771ms with 0 errors (exit code 0).
+- [x] Verify Pytest Unit Test Suite:
+  - Command: `.\.venv\Scripts\python.exe -m pytest -v`
+  - Actual Result: 10 passed in 9.04s (`test_dataset.py` 4 passed, `test_model.py` 4 passed, `test_train.py` 2 passed) (exit code 0).
+

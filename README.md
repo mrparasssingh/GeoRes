@@ -123,6 +123,12 @@ Outputs PSNR comparison: SRCNN vs bicubic baseline.
 python src/predict.py --image path/to/satellite_tile.jpg --scale 2 --out enhanced.png
 ```
 
+### 6. Run Automated Tests
+
+```bash
+pytest -v
+```
+
 ---
 
 ## 🌐 Web Application
@@ -162,21 +168,24 @@ Open `http://localhost:5173` in your browser.
 ## 📁 Project Structure
 
 ```
-TerraSharp/
+GeoRes/
 ├── src/
-│   ├── model.py          # SRCNN architecture (3-layer FCN, ~69K params)
+│   ├── model.py           # SRCNN architecture (3-layer FCN, ~69,251 params)
 │   ├── dataset.py         # SRDataset — builds degraded/HR pairs on the fly
 │   ├── train.py           # Training loop with AMP, checkpointing
 │   ├── evaluate.py        # PSNR evaluation vs bicubic baseline
 │   ├── predict.py         # Single-image CLI inference
 │   └── server.py          # REST API backend (ThreadingHTTPServer)
+├── tests/                 # Automated pytest unit test suite
+│   ├── test_model.py      # Architecture, parameters, output shape
+│   ├── test_dataset.py    # Dataset length, LR/HR tensor pairs
+│   └── test_train.py      # Forward/loss/backward optimization loop
 ├── frontend/
 │   ├── src/
 │   │   ├── pages/         # HomePage, EnhancePage, ResultsPage, HowItWorksPage
-│   │   ├── components/    # ComparisonSlider, UploadZone, Navbar, Toast
-│   │   ├── hooks/         # useEnhancement, useToast
-│   │   ├── services/      # API client, mock API for demo mode
-│   │   └── utils/         # Constants, file utilities, client-side enhance
+│   │   ├── components/    # Leaflet Map, ComparisonSlider, FileDropzone
+│   │   ├── hooks/         # useEnhancement, useJobPolling
+│   │   └── services/      # REST API client
 │   ├── package.json
 │   ├── vite.config.ts
 │   └── tailwind.config.js

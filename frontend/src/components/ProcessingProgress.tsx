@@ -24,7 +24,7 @@ export default function ProcessingProgress({ currentStep, status }: ProcessingPr
             {status === 'complete' ? 'Enhancement Complete' : 'Processing…'}
           </p>
           <p className="text-xs mt-0.5" style={{ color: '#6b7280' }}>
-            SwinIR deep learning super-resolution pipeline
+            SRCNN deep learning super-resolution pipeline
           </p>
         </div>
       </div>
