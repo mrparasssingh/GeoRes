@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "geores"
+version = "0.1.0"
+description = "GeoRes - Geospatial Land Use and Land Cover Classification Pipeline for SIH 2026"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "GeoRes Team" }
+]
+dependencies = [
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "scikit-learn>=1.2.0",
+    "pillow>=9.0.0",
+    "kaggle>=1.5.0",
+    "matplotlib>=3.6.0"
+]
+
+[project.scripts]
+geores-train = "src.train:main"
+geores-eval = "src.evaluate:main"
+geores-predict = "src.predict:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]

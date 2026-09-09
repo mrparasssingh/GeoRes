@@ -1,0 +1,61 @@
+# ── Python ──────────────────────────────────────────────
+.venv/
+env/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# ── Kaggle & Credentials ───────────────────────────────
+kaggle.json
+access_token
+.kaggle/
+
+# ── Datasets & Large Binaries ──────────────────────────
+data/
+datasets/
+*.zip
+*.tar.gz
+
+# ── Model Checkpoints ─────────────────────────────────
+checkpoints/
+*.pth
+*.pt
+*.onnx
+
+# ── Server Output (generated at runtime) ──────────────
+static/
+
+# ── Enhanced output images ────────────────────────────
+enhanced_*.png
+enhanced_*.tif
+
+# ── Frontend build & deps ─────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+*.local
+
+# ── Notebook checkpoints ──────────────────────────────
+.ipynb_checkpoints/
+
+# ── OS files ──────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editor configs ────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ── Logs ──────────────────────────────────────────────
+*.log
+npm-debug.log*
