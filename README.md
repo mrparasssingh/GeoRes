@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/Vite-8-646cff?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
 </p>
 
-<h1 align="center">🛰️ TerraSharp — GeoRes</h1>
+<h1 align="center">🛰️GeoRes</h1>
 <h3 align="center">Deep Learning Super-Resolution for Satellite Imagery</h3>
 <p align="center"><em>Smart India Hackathon 2026 · Problem Statement SIH2614</em></p>
 
