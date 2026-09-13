@@ -34,3 +34,8 @@ include = ["src*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 norecursedirs = [".venv", "data", "frontend", "static"]
+
+[tool.pyright]
+include = ["src", "tests"]
+extraPaths = ["."]
+

@@ -6,7 +6,9 @@ from PIL import Image
 import pytest
 import torch
 
+# pyrefly: ignore [missing-import]
 from src.evaluate import compute_psnr, evaluate_model
+# pyrefly: ignore [missing-import]
 from src.model import build_srcnn
 
 

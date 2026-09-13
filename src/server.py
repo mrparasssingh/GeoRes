@@ -35,6 +35,7 @@ import numpy as np
 import torch
 from torch.amp import autocast
 
+# pyrefly: ignore [missing-import]
 from src.model import build_srcnn, get_device
 
 # Directories
