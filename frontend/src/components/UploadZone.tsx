@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react'
+import { useRef, useState, useCallback } from 'react'
 import { Upload, Image as ImageIcon, X, FileText } from 'lucide-react'
 import { isValidImageFile, formatBytes, getFileFormat, getImagePreview } from '../utils/fileUtils'
 

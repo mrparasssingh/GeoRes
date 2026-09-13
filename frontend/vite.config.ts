@@ -53,6 +53,9 @@ export default defineConfig({
           if (id.includes('node_modules/leaflet/')) {
             return 'vendor-leaflet'
           }
+          if (id.includes('node_modules/motion')) {
+            return 'vendor-motion'
+          }
         },
       },
     },

@@ -5,17 +5,18 @@ import { useEnhancement } from '../hooks/useEnhancement'
 import ComparisonSlider from '../components/ComparisonSlider'
 import { ResultCard } from '../components/ResultCard'
 import ToastContainer from '../components/Toast'
+import { AnimatedNumber } from '../components/core/animated-number'
+import { Magnetic } from '../components/core/magnetic'
 import { useToast } from '../hooks/useToast'
 import { downloadFromUrl } from '../utils/fileUtils'
 import { SAMPLE_ORIGINAL_URL, SAMPLE_ENHANCED_URL } from '../utils/constants'
 
 export default function ResultsPage() {
   const navigate = useNavigate()
-  const { job, status } = useEnhancement()
+  const { job } = useEnhancement()
   const { toasts, toast, removeToast } = useToast()
   const [sliderKey, setSliderKey] = useState(0)
   const [viewerScale, setViewerScale] = useState(1)
-  const [isFullscreen, setIsFullscreen] = useState(false)
 
   // job.originalUrl = the URL of the user's uploaded image (Object URL or sample URL)
   // job.enhancedUrl = the enhanced version (data URL, static URL, or demo sample)
@@ -56,10 +57,8 @@ export default function ResultsPage() {
     if (!el) return
     if (!document.fullscreenElement) {
       el.requestFullscreen().catch(() => {})
-      setIsFullscreen(true)
     } else {
-      document.exitFullscreen()
-      setIsFullscreen(false)
+      document.exitFullscreen().catch(() => {})
     }
   }
 
@@ -183,25 +182,27 @@ export default function ResultsPage() {
             <div className="card p-5">
               <p className="font-semibold text-sm mb-4" style={{ color: '#0f1233' }}>Download Result</p>
               <div className="flex flex-col gap-3">
-                <button
-                  id="download-png-btn"
-                  onClick={handleDownloadPng}
-                  className="btn-primary w-full"
-                  style={{ justifyContent: 'center' }}
-                >
-                  <Download size={16} />
-                  Download PNG
-                </button>
-                <button
-                  id="download-geotiff-btn"
-                  onClick={handleDownloadGeoTiff}
-                  className="btn-secondary w-full"
-                  style={{ justifyContent: 'center' }}
-                >
-                  <Download size={16} />
-                  Download TIFF
-                  {isDemo && <span className="badge badge-demo ml-1 text-xs py-0">demo</span>}
-                </button>
+                <Magnetic intensity={0.2} range={60} className="w-full">
+                  <button
+                    id="download-png-btn"
+                    onClick={handleDownloadPng}
+                    className="btn-primary w-full inline-flex items-center justify-center gap-2"
+                  >
+                    <Download size={16} />
+                    Download PNG
+                  </button>
+                </Magnetic>
+                <Magnetic intensity={0.2} range={60} className="w-full">
+                  <button
+                    id="download-geotiff-btn"
+                    onClick={handleDownloadGeoTiff}
+                    className="btn-secondary w-full inline-flex items-center justify-center gap-2"
+                  >
+                    <Download size={16} />
+                    Download TIFF
+                    {isDemo && <span className="badge badge-demo ml-1 text-xs py-0">demo</span>}
+                  </button>
+                </Magnetic>
 
                 {isDemo && (
                   <p className="text-xs leading-relaxed" style={{ color: '#9ca3af' }}>
@@ -213,31 +214,39 @@ export default function ResultsPage() {
             </div>
 
             {/* Enhance another */}
-            <button
-              id="enhance-another-btn"
-              onClick={handleEnhanceAnother}
-              className="btn-navy w-full"
-              style={{ justifyContent: 'center' }}
-            >
-              <RefreshCw size={16} />
-              Enhance Another Image
-            </button>
+            <Magnetic intensity={0.15} range={60} className="w-full">
+              <button
+                id="enhance-another-btn"
+                onClick={handleEnhanceAnother}
+                className="btn-navy w-full inline-flex items-center justify-center gap-2"
+              >
+                <RefreshCw size={16} />
+                Enhance Another Image
+              </button>
+            </Magnetic>
 
-            {/* Quick stats */}
+            {/* Quick stats with AnimatedNumber */}
             <div className="card p-5">
               <p className="font-semibold text-sm mb-3" style={{ color: '#0f1233' }}>Quick Stats</p>
               <div className="grid grid-cols-2 gap-3">
-                {[
-                  { label: 'Scale', value: '4×' },
-                  { label: 'Model', value: job?.model ?? 'SRCNN' },
-                  { label: 'Architecture', value: '3-Layer CNN' },
-                  { label: 'Processing', value: 'Bicubic + SR' },
-                ].map(({ label, value }) => (
-                  <div key={label} className="rounded-xl p-3 text-center" style={{ background: '#f0f4ff' }}>
-                    <p className="text-xs mb-1" style={{ color: '#9ca3af' }}>{label}</p>
-                    <p className="text-sm font-bold" style={{ color: '#0d9490' }}>{value}</p>
-                  </div>
-                ))}
+                <div className="rounded-xl p-3 text-center" style={{ background: '#f0f4ff' }}>
+                  <p className="text-xs mb-1" style={{ color: '#475569' }}>Scale</p>
+                  <p className="text-sm font-bold" style={{ color: '#0d9490' }}>
+                    <AnimatedNumber value={4.0} decimals={1} />×
+                  </p>
+                </div>
+                <div className="rounded-xl p-3 text-center" style={{ background: '#f0f4ff' }}>
+                  <p className="text-xs mb-1" style={{ color: '#475569' }}>Model</p>
+                  <p className="text-sm font-bold truncate" style={{ color: '#0d9490' }}>{job?.model ?? 'SRCNN'}</p>
+                </div>
+                <div className="rounded-xl p-3 text-center" style={{ background: '#f0f4ff' }}>
+                  <p className="text-xs mb-1" style={{ color: '#475569' }}>Architecture</p>
+                  <p className="text-sm font-bold" style={{ color: '#0d9490' }}>3-Layer CNN</p>
+                </div>
+                <div className="rounded-xl p-3 text-center" style={{ background: '#f0f4ff' }}>
+                  <p className="text-xs mb-1" style={{ color: '#475569' }}>Processing</p>
+                  <p className="text-sm font-bold" style={{ color: '#0d9490' }}>Bicubic + SR</p>
+                </div>
               </div>
             </div>
           </div>

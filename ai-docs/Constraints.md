@@ -6,3 +6,4 @@ Explicit list of what must never happen in this project. Read before every chang
 - **Data & Secrets**: Never commit Kaggle credentials (`kaggle.json`), API keys, or large dataset binary files (`.tif`, `.tar.gz`, `.zip`, raw imagery) to version control.
 - **File Integrity**: Maintain documentation-first workflow under `ai-docs/`. Keep inline comments explaining non-obvious code logic.
 - **Scope**: Keep changes modular and verified with reproducible checks.
+- **Hero Map**: Maintain the Sentinel-2 radar placeholder and on-demand interactive Leaflet activation in `HeroMapViewer.tsx` exactly as designed; do not modify or alter it.

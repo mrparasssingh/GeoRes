@@ -77,4 +77,17 @@ Concrete commands to run and expected output, checked before any change counts a
     - Enhance (`/enhance`): RGB-only mode, 4x scale, sample tile selection, live processing stepper.
     - Results (`/results`): Interactive Before/After split comparison slider, zoom controls, metrics card, and PNG/TIFF attachment downloads verified.
 
+## Phase 8: Motion-Primitives UI Enhancement Verification
+- [x] Verify Motion Dependency & Core Components Lint:
+  - Command: `npm --prefix frontend run lint`
+  - Actual Result: 0 errors across 33 files with 0 warnings on newly created core components.
+- [x] Verify Isolated Chunk Bundling:
+  - Command: `npm run build`
+  - Actual Result: Built in 691ms; `vendor-motion` isolated (124 kB / gzip 40 kB); `HomePage` remains compact at 28.8 kB.
+- [x] Verify Full Pytest Backend Regression:
+  - Command: `.\.venv\Scripts\python.exe -m pytest`
+  - Actual Result: All 21 passed in 13.86s (exit code 0).
+- [x] End-to-End Visual & Interactive Browser Verification:
+  - Automated browser session verified TextShimmer badge, TextLoop dynamic headline, InfiniteSlider continuous marquee, AnimatedNumber spring counters, Spotlight dark card hover, Tilt parallax, BorderTrail processing animation, and ComparisonSlider on `/results` with 0 console errors.
+
 

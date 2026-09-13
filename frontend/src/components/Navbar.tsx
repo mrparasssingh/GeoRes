@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Satellite, Menu, X, Zap } from 'lucide-react'
+import { AnimatedBackground } from './core/animated-background'
+import { Magnetic } from './core/magnetic'
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -57,29 +59,39 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150"
-                style={{
-                  color: location.pathname === link.to ? '#0f766e' : '#334155',
-                  background: location.pathname === link.to ? 'rgba(15,118,110,0.1)' : 'transparent',
-                }}
-              >
-                {link.label}
-              </Link>
-            ))}
+          {/* Desktop Nav with AnimatedBackground */}
+          <nav className="hidden md:flex items-center p-1 rounded-xl bg-slate-100/70 border border-slate-200/60 backdrop-blur-md">
+            <AnimatedBackground
+              defaultValue={location.pathname}
+              value={location.pathname}
+              className="rounded-lg bg-white shadow-xs border border-slate-200/80"
+              transition={{ type: 'spring', bounce: 0.12, duration: 0.35 }}
+              enableHover
+            >
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  data-id={link.to}
+                  to={link.to}
+                  className="px-3.5 py-1.5 text-sm font-semibold transition-colors duration-150"
+                  style={{
+                    color: location.pathname === link.to ? '#0f766e' : '#475569',
+                  }}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </AnimatedBackground>
           </nav>
 
-          {/* CTA */}
+          {/* CTA with Magnetic */}
           <div className="hidden md:flex items-center gap-3">
-            <Link to="/enhance" className="btn-primary" style={{ padding: '8px 18px', fontSize: '13px' }}>
-              <Zap size={14} />
-              Enhance Image
-            </Link>
+            <Magnetic intensity={0.25} range={70}>
+              <Link to="/enhance" className="btn-primary" style={{ padding: '8px 18px', fontSize: '13px' }}>
+                <Zap size={14} />
+                Enhance Image
+              </Link>
+            </Magnetic>
           </div>
 
           {/* Mobile menu toggle */}

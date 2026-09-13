@@ -4,6 +4,8 @@ import { Zap, Image as ImageIcon, Settings, Info } from 'lucide-react'
 import UploadZone from '../components/UploadZone'
 import ProcessingProgress from '../components/ProcessingProgress'
 import ToastContainer from '../components/Toast'
+import { BorderTrail } from '../components/core/border-trail'
+import { Magnetic } from '../components/core/magnetic'
 import { useEnhancement } from '../hooks/useEnhancement'
 import { useToast } from '../hooks/useToast'
 import { SAMPLE_ORIGINAL_URL, DEMO_MODE } from '../utils/constants'
@@ -33,7 +35,7 @@ export default function EnhancePage() {
     if (status === 'error' && error) {
       toast.error('Enhancement Failed', error)
     }
-  }, [status, error])
+  }, [status, error, toast])
 
   const handleFileSelect = useCallback((file: File, preview: string | null) => {
     setSelectedFile(file)
@@ -169,9 +171,10 @@ export default function EnhancePage() {
               </div>
             )}
 
-            {/* Processing progress */}
+            {/* Processing progress with luminous BorderTrail */}
             {isProcessing && (
-              <div className="animate-slide-up">
+              <div className="animate-slide-up relative rounded-2xl overflow-hidden p-0.5 border border-teal-500/30 shadow-lg shadow-teal-500/10">
+                <BorderTrail size={100} className="bg-gradient-to-r from-teal-400 via-cyan-300 to-emerald-400" />
                 <ProcessingProgress currentStep={currentStep} status={status} />
               </div>
             )}
@@ -253,31 +256,32 @@ export default function EnhancePage() {
               )}
             </div>
 
-            {/* Start button */}
-            <button
-              id="start-enhancement-btn"
-              onClick={handleStartEnhancement}
-              disabled={isProcessing || status === 'complete'}
-              className="btn-primary w-full py-3.5 text-base font-bold"
-              style={{ justifyContent: 'center' }}
-            >
-              {isProcessing ? (
-                <>
-                  <svg className="animate-spin-slow w-5 h-5" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.2" />
-                    <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-                  </svg>
-                  Processing…
-                </>
-              ) : status === 'complete' ? (
-                <>✓ Done — Redirecting</>
-              ) : (
-                <>
-                  <Zap size={18} />
-                  Start Enhancement
-                </>
-              )}
-            </button>
+            {/* Start button with Magnetic interaction */}
+            <Magnetic intensity={0.2} range={70} className="w-full">
+              <button
+                id="start-enhancement-btn"
+                onClick={handleStartEnhancement}
+                disabled={isProcessing || status === 'complete'}
+                className="btn-primary w-full py-3.5 text-base font-bold inline-flex items-center justify-center gap-2"
+              >
+                {isProcessing ? (
+                  <>
+                    <svg className="animate-spin-slow w-5 h-5" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.2" />
+                      <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                    </svg>
+                    Processing…
+                  </>
+                ) : status === 'complete' ? (
+                  <>✓ Done — Redirecting</>
+                ) : (
+                  <>
+                    <Zap size={18} />
+                    Start Enhancement
+                  </>
+                )}
+              </button>
+            </Magnetic>
           </div>
         </div>
       </div>
