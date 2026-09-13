@@ -19,7 +19,7 @@ export default function EnhancePage() {
   const [objectUrl, setObjectUrl] = useState<string | null>(null)  // always set for uploaded files
   const [scale] = useState(4)
   const [model] = useState('SRCNN')
-  const [channels, setChannels] = useState<'RGB' | 'RGB + NIR'>('RGB')
+  const channels = 'RGB'  // Only RGB is supported by current SRCNN model
 
   // Navigate to results when complete
   useEffect(() => {
@@ -158,7 +158,7 @@ export default function EnhancePage() {
                     { label: 'Format', value: selectedFile ? (selectedFile.name.endsWith('.tif') || selectedFile.name.endsWith('.tiff') ? 'GeoTIFF' : selectedFile.name.split('.').pop()?.toUpperCase() ?? '—') : 'JPEG (demo)' },
                     { label: 'Resolution', value: 'Detected during processing' },
                     { label: 'Channels', value: channels },
-                    { label: 'CRS / EPSG', value: selectedFile ? 'Detected during processing' : 'EPSG:4326 (demo)' },
+                    { label: 'CRS / EPSG', value: 'Not preserved (plain TIFF export)' },
                   ].map(({ label, value }) => (
                     <div key={label} className="rounded-lg p-3" style={{ background: '#f0f4ff' }}>
                       <p className="text-xs mb-1" style={{ color: '#9ca3af' }}>{label}</p>
@@ -221,22 +221,12 @@ export default function EnhancePage() {
                 {/* Channels */}
                 <div>
                   <label className="text-xs font-semibold mb-2 block" style={{ color: '#6b7280' }}>Channels</label>
-                  <div className="flex gap-2">
-                    {(['RGB', 'RGB + NIR'] as const).map((ch) => (
-                      <button
-                        key={ch}
-                        id={`channel-${ch.replace(/\s/g, '-').replace(/\+/g, 'plus')}`}
-                        onClick={() => setChannels(ch)}
-                        className="flex-1 py-2.5 rounded-xl text-xs font-semibold transition-all"
-                        style={{
-                          background: channels === ch ? '#0d9490' : '#f0f4ff',
-                          color: channels === ch ? 'white' : '#6b7280',
-                          border: channels === ch ? 'none' : '1px solid rgba(15,18,51,0.08)',
-                        }}
-                      >
-                        {ch}
-                      </button>
-                    ))}
+                  <div
+                    className="flex items-center justify-between px-4 py-3 rounded-xl font-semibold text-sm"
+                    style={{ background: '#f0f4ff', color: '#0f1233' }}
+                  >
+                    RGB (3-channel)
+                    <span className="badge badge-teal">Supported</span>
                   </div>
                 </div>
               </div>

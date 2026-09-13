@@ -12,6 +12,7 @@ Features:
   - GET /health: Health check and GPU acceleration diagnostics
 """
 
+import argparse
 import email
 from email.policy import default
 import io
@@ -41,6 +42,15 @@ STATIC_DIR = ROOT_DIR / "static"
 STATIC_DIR.mkdir(parents=True, exist_ok=True)
 CHECKPOINT_PATH = ROOT_DIR / "checkpoints" / "srcnn_best.pth"
 
+# Server limits
+MAX_UPLOAD_BYTES = 100 * 1024 * 1024  # 100 MB — matches frontend cap
+MAX_IMAGE_DIM = 4096  # Reject inputs with either axis > 4096px to prevent GPU OOM
+MAX_JOBS = 200  # Maximum jobs to keep in memory before evicting oldest
+JOB_TTL_SECONDS = 3600  # Jobs older than 1 hour are evicted on next request
+
+# CORS — restrict to the Vite dev server origin
+ALLOWED_ORIGIN = "http://localhost:5173"
+
 # In-memory store for enhancement jobs
 JOBS: Dict[str, Dict[str, Any]] = {}
 
@@ -66,12 +76,34 @@ def load_model():
     return _MODEL, _DEVICE
 
 
+def _evict_stale_jobs():
+    """Remove jobs older than JOB_TTL_SECONDS and enforce MAX_JOBS cap."""
+    now = time.time()
+    # Evict by TTL
+    expired = [jid for jid, j in JOBS.items() if now - j.get("_created_at", now) > JOB_TTL_SECONDS]
+    for jid in expired:
+        JOBS.pop(jid, None)
+    # Evict oldest if over cap
+    while len(JOBS) > MAX_JOBS:
+        oldest_id = next(iter(JOBS))
+        JOBS.pop(oldest_id, None)
+
+
 def run_super_resolution(img: Image.Image, scale: int = 2) -> Image.Image:
-    """Applies bicubic upsampling followed by SRCNN refinement."""
+    """Applies bicubic upsampling followed by SRCNN refinement.
+
+    Raises ValueError if the input image exceeds MAX_IMAGE_DIM on either axis.
+    """
     model, device = load_model()
-    
-    # Upscale input via bicubic first
+
     orig_w, orig_h = img.size
+    if orig_w > MAX_IMAGE_DIM or orig_h > MAX_IMAGE_DIM:
+        raise ValueError(
+            f"Image dimensions {orig_w}×{orig_h} exceed maximum {MAX_IMAGE_DIM}px. "
+            f"Please resize before uploading."
+        )
+
+    # Upscale input via bicubic first
     target_w, target_h = orig_w * scale, orig_h * scale
     upscaled = img.resize((target_w, target_h), Image.BICUBIC)
 
@@ -97,7 +129,7 @@ class GeoResAPIHandler(BaseHTTPRequestHandler):
     """HTTP Request Handler providing REST API for GeoRes Super-Resolution."""
 
     def _set_cors_headers(self):
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Origin", ALLOWED_ORIGIN)
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         self.send_header("Access-Control-Expose-Headers", "Content-Disposition, Content-Length")
@@ -112,7 +144,7 @@ class GeoResAPIHandler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path
 
-        if path == "/health":
+        if path in ("/health", "/api/health"):
             _, device = load_model()
             payload = {
                 "status": "healthy",
@@ -216,6 +248,12 @@ class GeoResAPIHandler(BaseHTTPRequestHandler):
             try:
                 content_type = self.headers.get("Content-Type", "")
                 content_length = int(self.headers.get("Content-Length", 0))
+
+                # C2: Reject uploads exceeding size limit
+                if content_length > MAX_UPLOAD_BYTES:
+                    self._send_json(413, {"detail": f"Upload too large ({content_length} bytes). Max is {MAX_UPLOAD_BYTES // (1024*1024)} MB."})
+                    return
+
                 body_bytes = self.rfile.read(content_length)
 
                 file_bytes: Optional[bytes] = None
@@ -236,7 +274,7 @@ class GeoResAPIHandler(BaseHTTPRequestHandler):
                             if raw_scale:
                                 try:
                                     scale_val = int(raw_scale.decode("utf-8").strip())
-                                except Exception:
+                                except (ValueError, UnicodeDecodeError):
                                     pass
                 else:
                     # Raw image payload
@@ -257,7 +295,7 @@ class GeoResAPIHandler(BaseHTTPRequestHandler):
                 input_img.save(orig_path)
 
                 start_time = time.time()
-                # Run PyTorch SRCNN super-resolution
+                # Run PyTorch SRCNN super-resolution (validates dimensions inside)
                 enhanced_img = run_super_resolution(input_img, scale=scale_val)
                 latency_ms = round((time.time() - start_time) * 1000, 2)
 
@@ -266,36 +304,44 @@ class GeoResAPIHandler(BaseHTTPRequestHandler):
                 enh_png_path = STATIC_DIR / enh_png_filename
                 enhanced_img.save(enh_png_path, format="PNG")
 
-                # Save authentic enhanced TIFF for genuine GeoTIFF compliance
+                # Save enhanced TIFF (plain TIFF via Pillow — no geospatial metadata)
                 enh_tif_filename = f"enh_{job_id}_{stem}.tif"
                 enh_tif_path = STATIC_DIR / enh_tif_filename
                 enhanced_img.save(enh_tif_path, format="TIFF")
 
-                # Store job record for polling and download retrieval
-                host = self.headers.get("Host", "localhost:8000")
+                # C1: Evict stale/old jobs before adding a new one
+                _evict_stale_jobs()
+
+                # Store job record with relative URLs for proxy compatibility (M3)
                 JOBS[job_id] = {
                     "jobId": job_id,
                     "status": "complete",
                     "currentStep": 5,
-                    "originalUrl": f"http://{host}/static/{orig_filename}",
-                    "enhancedUrl": f"http://{host}/static/{enh_png_filename}",
+                    "originalUrl": f"/static/{orig_filename}",
+                    "enhancedUrl": f"/static/{enh_png_filename}",
                     "enhancedPngFilename": enh_png_filename,
                     "enhancedTifFilename": enh_tif_filename,
-                    "downloadPngUrl": f"http://{host}/api/download/{job_id}?format=png",
-                    "downloadTifUrl": f"http://{host}/api/download/{job_id}?format=geotiff",
+                    "downloadPngUrl": f"/api/download/{job_id}?format=png",
+                    "downloadTifUrl": f"/api/download/{job_id}?format=geotiff",
                     "filename": safe_name,
                     "isDemo": False,
                     "scale": scale_val,
                     "latency_ms": latency_ms,
                     "model": "SRCNN",
+                    "_created_at": time.time(),
                 }
 
                 print(f"[Backend] Processed job {job_id} ({safe_name}) in {latency_ms} ms on {_DEVICE} (saved PNG + TIFF)")
                 self._send_json(200, {"jobId": job_id})
 
-            except Exception as e:
+            except ValueError as e:
+                # Dimension validation or image parsing errors
+                print(f"[Backend WARN] {e}")
+                self._send_json(400, {"detail": str(e)})
+            except (OSError, RuntimeError) as e:
+                # I/O errors, CUDA OOM, tensor errors
                 print(f"[Backend ERROR] {e}")
-                self._send_json(500, {"detail": str(e)})
+                self._send_json(500, {"detail": "Enhancement failed. The image may be too large or corrupted."})
         else:
             self._send_json(404, {"error": "Endpoint not found"})
 
@@ -328,5 +374,11 @@ def run_server(port: int = 8000):
 
 
 if __name__ == "__main__":
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
+    parser = argparse.ArgumentParser(description="GeoRes PyTorch SRCNN REST Server")
+    parser.add_argument("port_positional", nargs="?", type=int, default=None, help="Server port (positional)")
+    parser.add_argument("--port", "-p", type=int, default=None, help="Server port")
+    args = parser.parse_args()
+
+    port = args.port or args.port_positional or 8000
     run_server(port)
+

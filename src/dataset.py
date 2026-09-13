@@ -85,15 +85,21 @@ class SRDataset(Dataset):
 
         These are spatial-preserving transforms that don't change image
         dimensions, suitable for the fixed 64×64 EuroSAT tiles.
+        Uses PIL transpose for lossless exact 90° rotations (avoids
+        bilinear interpolation artifacts from TF.rotate).
         """
         if random.random() > 0.5:
             img = TF.hflip(img)
         if random.random() > 0.5:
             img = TF.vflip(img)
-        # Random 0/90/180/270° rotation
+        # Lossless 90° rotation via PIL transpose (no interpolation)
         k = random.randint(0, 3)
-        if k > 0:
-            img = TF.rotate(img, angle=90 * k)
+        if k == 1:
+            img = img.transpose(Image.ROTATE_90)
+        elif k == 2:
+            img = img.transpose(Image.ROTATE_180)
+        elif k == 3:
+            img = img.transpose(Image.ROTATE_270)
         return img
 
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:

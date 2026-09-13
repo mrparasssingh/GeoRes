@@ -35,7 +35,7 @@ const techCards = [
 
 const stackItems = [
   { group: 'AI / Model', items: ['Python', 'PyTorch', 'SRCNN', 'CUDA 12.6', 'Torchvision'], color: '#0d9490' },
-  { group: 'Image I/O', items: ['Pillow', 'NumPy', 'GeoTIFF / PNG / JPEG'], color: '#1e2461' },
+  { group: 'Image I/O', items: ['Pillow', 'NumPy', 'TIFF / PNG / JPEG'], color: '#1e2461' },
   { group: 'Backend', items: ['Python http.server', 'ThreadingHTTPServer', 'REST API'], color: '#7c3aed' },
   { group: 'Frontend', items: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Leaflet'], color: '#0f1233' },
 ]

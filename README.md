@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/Vite-8-646cff?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
 </p>
 
-<h1 align="center">🛰️GeoRes</h1>
+<h1 align="center">🛰️ GeoRes</h1>
 <h3 align="center">Deep Learning Super-Resolution for Satellite Imagery</h3>
 <p align="center"><em>Smart India Hackathon 2026 · Problem Statement SIH2614</em></p>
 
@@ -15,7 +15,7 @@
 
 ## 📋 Overview
 
-**TerraSharp (GeoRes)** is an end-to-end deep learning pipeline for enhancing medium-resolution satellite imagery. It takes Sentinel-2 satellite tiles and produces spatially enhanced outputs using a trained SRCNN (Super-Resolution Convolutional Neural Network), served through a real-time API with an interactive React frontend.
+**GeoRes** is an end-to-end deep learning pipeline for enhancing medium-resolution satellite imagery. It takes Sentinel-2 satellite tiles and produces spatially enhanced outputs using a trained SRCNN (Super-Resolution Convolutional Neural Network), served through a real-time API with an interactive React frontend.
 
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
@@ -70,8 +70,8 @@ Output (B, 3, H, W)  ← Same spatial size, sharpened
 ### 1. Clone & Setup Python Environment
 
 ```bash
-git clone https://github.com/mrparasssingh/TerraSharp.git
-cd TerraSharp
+git clone https://github.com/mrparasssingh/GeoRes.git
+cd GeoRes
 
 # Create virtual environment
 python -m venv .venv
@@ -254,7 +254,7 @@ EuroSAT 64×64 Tiles
 
 ## 🖥️ Frontend Features
 
-- **Drag & Drop Upload** — Supports GeoTIFF, PNG, JPG up to 100MB
+- **Drag & Drop Upload** — Supports TIFF, PNG, JPG up to 100MB
 - **Before/After Slider** — Interactive comparison with zoom controls
 - **Real-Time Processing** — GPU-accelerated inference with live progress
 - **Multiple Downloads** — Enhanced PNG and TIFF formats

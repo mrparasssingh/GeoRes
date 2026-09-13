@@ -8,7 +8,7 @@ export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:80
 // ─── Enhancement Options ─────────────────────────────────────────────────────
 export const SUPPORTED_SCALES = [4] as const
 export const SUPPORTED_MODELS = ['SRCNN'] as const
-export const SUPPORTED_CHANNELS = ['RGB', 'RGB + NIR'] as const
+export const SUPPORTED_CHANNELS = ['RGB'] as const
 
 // ─── File Upload ─────────────────────────────────────────────────────────────
 export const MAX_FILE_SIZE_MB = 100

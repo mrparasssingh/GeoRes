@@ -1,13 +1,13 @@
-"""GeoRes SRCNN Super-Resolution Model Architecture.
+"""GeoRes SRCNN (Super-Resolution Convolutional Neural Network) architecture.
 
-Implements SRCNN (Dong et al., 2014) — a 3-layer fully-convolutional network
-that takes a bicubic-upsampled blurry image and outputs a sharpened image of
-the SAME spatial dimensions.
+A 3-layer fully-convolutional network for satellite image super-resolution:
+- Conv2d(3→64, 9×9) + ReLU  — Patch Extraction
+- Conv2d(64→32, 5×5) + ReLU — Non-Linear Mapping  
+- Conv2d(32→3, 5×5)         — Reconstruction
 
-Key differences from the previous classifier (ResNet-18):
-  - Output is an image (H × W × 3), not a class vector.
-  - No pooling, no linear layers, no softmax — spatial size preserved throughout.
-  - Final layer is Conv2d(32, 3), not Linear(512, 10).
+Total parameters: ~69,251 (~280 KB checkpoint).
+Operates on pre-upscaled input (bicubic) and outputs sharpened result
+at the same spatial dimensions.
 """
 
 from typing import Optional

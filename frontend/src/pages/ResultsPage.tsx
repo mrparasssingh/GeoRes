@@ -7,7 +7,7 @@ import { ResultCard } from '../components/ResultCard'
 import ToastContainer from '../components/Toast'
 import { useToast } from '../hooks/useToast'
 import { downloadFromUrl } from '../utils/fileUtils'
-import { SAMPLE_ORIGINAL_URL, SAMPLE_ENHANCED_URL, API_BASE_URL } from '../utils/constants'
+import { SAMPLE_ORIGINAL_URL, SAMPLE_ENHANCED_URL } from '../utils/constants'
 
 export default function ResultsPage() {
   const navigate = useNavigate()
@@ -25,13 +25,9 @@ export default function ResultsPage() {
   const isDemo = !job || job.isDemo
   const filename = job?.filename?.replace(/\.[^.]+$/, '') ?? 'satellite_image'
 
-  // Dedicated backend attachment download endpoints
-  const downloadPngUrl = job?.jobId
-    ? `${API_BASE_URL}/api/download/${job.jobId}?format=png`
-    : enhancedUrl
-  const downloadTifUrl = job?.jobId
-    ? `${API_BASE_URL}/api/download/${job.jobId}?format=geotiff`
-    : enhancedUrl
+  // Use relative URLs for proxy compatibility (job URLs are now relative from server)
+  const downloadPngUrl = job?.downloadPngUrl ?? enhancedUrl
+  const downloadTifUrl = job?.downloadTifUrl ?? enhancedUrl
 
   const handleDownloadPng = async () => {
     toast.info('Downloading…', 'Saving enhanced image as PNG')
@@ -43,7 +39,7 @@ export default function ResultsPage() {
   }
 
   const handleDownloadGeoTiff = async () => {
-    toast.info('Downloading…', isDemo ? 'Demo mode: downloading PNG as .tif' : 'Saving authentic GeoTIFF result')
+    toast.info('Downloading…', isDemo ? 'Demo mode: downloading PNG as .tif' : 'Saving enhanced TIFF result')
     try {
       await downloadFromUrl(downloadTifUrl, `${filename}_enhanced_4x.tif`)
     } catch {
@@ -72,8 +68,8 @@ export default function ResultsPage() {
     { label: 'Model', value: job?.model ?? 'GeoRes SRCNN (PyTorch CUDA)' },
     { label: 'Input', value: '10 m medium-resolution imagery' },
     { label: 'Output', value: 'Enhanced high-detail imagery' },
-    { label: 'Format', value: 'GeoTIFF / PNG' },
-    { label: 'Metadata', value: 'CRS / EPSG preserved when available' },
+    { label: 'Format', value: 'TIFF / PNG' },
+    { label: 'Metadata', value: 'Plain TIFF (no geospatial metadata)' },
     { label: 'Processing', value: isDemo ? 'Demo Simulation' : 'Completed', highlight: !isDemo },
   ]
 
@@ -203,14 +199,14 @@ export default function ResultsPage() {
                   style={{ justifyContent: 'center' }}
                 >
                   <Download size={16} />
-                  Download GeoTIFF
+                  Download TIFF
                   {isDemo && <span className="badge badge-demo ml-1 text-xs py-0">demo</span>}
                 </button>
 
                 {isDemo && (
                   <p className="text-xs leading-relaxed" style={{ color: '#9ca3af' }}>
-                    In demo mode, GeoTIFF download provides the sample PNG with a .tif extension.
-                    Real GeoTIFF output requires the live PyTorch backend.
+                    In demo mode, TIFF download provides the sample PNG with a .tif extension.
+                    Real TIFF output requires the live PyTorch backend.
                   </p>
                 )}
               </div>

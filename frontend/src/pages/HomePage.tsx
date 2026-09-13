@@ -21,8 +21,8 @@ const features = [
   },
   {
     icon: <Database size={22} style={{ color: '#0d9490' }} />,
-    title: 'GeoTIFF Metadata Preservation',
-    desc: 'CRS, EPSG codes and geospatial metadata are carried through the pipeline so the output can be used directly in GIS workflows.',
+    title: 'TIFF Export',
+    desc: 'Enhanced images are exported as both PNG and TIFF formats for downstream GIS tool compatibility.',
   },
   {
     icon: <Layers size={22} style={{ color: '#0d9490' }} />,

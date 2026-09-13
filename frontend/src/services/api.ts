@@ -1,8 +1,8 @@
 /**
  * Real API service — used when DEMO_MODE = false.
- * Connect to PyTorch HTTP backend at API_BASE_URL.
+ * Requests use relative URLs so they go through the Vite reverse proxy
+ * (configured in vite.config.ts to forward /api/* to localhost:8000).
  */
-import { API_BASE_URL } from '../utils/constants'
 import type { EnhancementJob, EnhancementOptions } from './mockApi'
 
 export async function realEnhanceImage(
@@ -15,7 +15,7 @@ export async function realEnhanceImage(
   form.append('model', options.model)
   form.append('channels', options.channels)
 
-  const res = await fetch(`${API_BASE_URL}/api/enhance`, {
+  const res = await fetch(`/api/enhance`, {
     method: 'POST',
     body: form,
   })
@@ -29,13 +29,13 @@ export async function realEnhanceImage(
 }
 
 export async function pollJobStatus(jobId: string): Promise<EnhancementJob> {
-  const res = await fetch(`${API_BASE_URL}/api/jobs/${jobId}`)
+  const res = await fetch(`/api/jobs/${jobId}`)
   if (!res.ok) throw new Error(`Job not found: ${jobId}`)
   return res.json()
 }
 
 export async function getResult(jobId: string): Promise<EnhancementJob> {
-  const res = await fetch(`${API_BASE_URL}/api/results/${jobId}`)
+  const res = await fetch(`/api/results/${jobId}`)
   if (!res.ok) throw new Error(`Result not found: ${jobId}`)
   return res.json()
 }

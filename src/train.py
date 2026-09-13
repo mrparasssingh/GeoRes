@@ -56,8 +56,9 @@ def train_pipeline(
     # Adam (not AdamW) — weight decay is less important for this tiny 3-layer model
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-    # AMP scaler — mandatory to fit training into 6GB VRAM
-    scaler = GradScaler('cuda')
+    # AMP scaler — only used when CUDA is available (mandatory for 6GB VRAM)
+    use_amp = device.type == "cuda"
+    scaler = GradScaler('cuda') if use_amp else None
 
     # L1Loss produces sharper results than MSE for super-resolution
     # (MSE tends to produce blurry averages; L1 preserves edges better)
@@ -78,13 +79,18 @@ def train_pipeline(
             hr_img = hr_img.to(device, non_blocking=True)
 
             optimizer.zero_grad(set_to_none=True)
-            with autocast('cuda'):
+            if use_amp:
+                with autocast('cuda'):
+                    pred = model(lr_img)
+                    loss = criterion(pred, hr_img)
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
+            else:
                 pred = model(lr_img)
                 loss = criterion(pred, hr_img)
-
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
+                loss.backward()
+                optimizer.step()
 
             running_loss += loss.item() * lr_img.size(0)
 

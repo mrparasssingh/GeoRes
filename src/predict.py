@@ -2,9 +2,7 @@
 
 Loads a low-quality input image, upscales via bicubic interpolation,
 then refines/sharpens using the trained SRCNN model. Output is a saved
-image file — not a printed label or class confidence.
-
-Replaces the old classifier's predict.py (top-k class prediction).
+image file (PNG or TIFF).
 """
 
 import argparse
@@ -66,9 +64,13 @@ def enhance_image(
     inp = torch.from_numpy(np.array(upscaled)).permute(2, 0, 1).float().unsqueeze(0) / 255.0
     inp = inp.to(device)
 
-    # Run SRCNN with AMP for speed on 6GB GPU
-    with torch.no_grad(), autocast('cuda'):
-        out = model(inp)
+    # Run SRCNN — use AMP only when CUDA is available
+    with torch.no_grad():
+        if device.type == "cuda":
+            with autocast("cuda"):
+                out = model(inp)
+        else:
+            out = model(inp)
 
     # Convert back to image: clamp to valid range, denormalize
     out = out.clamp(0, 1).squeeze(0).permute(1, 2, 0).cpu().numpy()

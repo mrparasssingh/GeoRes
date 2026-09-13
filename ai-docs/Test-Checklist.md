@@ -27,54 +27,12 @@ Concrete commands to run and expected output, checked before any change counts a
   - Command: `.\.venv\Scripts\python -c "import os; files = os.listdir('data/eurosat/Dataset'); print('Total:', len(files)); classes = set(f.split('_')[0] for f in files); print(sorted(list(classes)))"`
   - Actual Result: 27,000 images across 10 classes (`AnnualCrop`, `Forest`, `HerbaceousVegetation`, `Highway`, `Industrial`, `Pasture`, `PermanentCrop`, `Residential`, `River`, `SeaLake`).
 
-## Phase 2: PyTorch Baseline Classification Pipeline
-- [x] Install PyTorch dependencies:
-  - Command: `.\.venv\Scripts\pip install torch torchvision matplotlib scikit-learn`
-  - Actual Result: Successfully installed torch-2.14.0, torchvision-0.29.0, scikit-learn-1.9.0, matplotlib-3.11.1 (exit code 0).
-- [x] Verify dataset loader & augmentations:
-  - Command: `.\.venv\Scripts\python src/dataset.py`
-  - Actual Result: Train samples: 18,900 | Val: 4,050 | Test: 4,050. Image shape: `[16, 3, 64, 64]`. Self-test PASSED (exit code 0).
-- [x] Verify model initialization:
-  - Command: `.\.venv\Scripts\python src/model.py`
-  - Actual Result: ResNet-18 initialized with custom 10-class head. Dummy batch shape: `[4, 10]`. Self-test PASSED (exit code 0).
-- [x] Run fast smoke training epoch:
-  - Command: `.\.venv\Scripts\python src/train.py --epochs 1 --smoke-test`
-  - Actual Result: Epoch 1 finished in 16.7s. Train Acc: 51.22%, Val Acc: 77.72%. Saved `checkpoints/best_model.pth` and `checkpoints/training_history.json` (exit code 0).
-- [x] Verify evaluation script:
-  - Command: `.\.venv\Scripts\python src/evaluate.py --smoke-test`
-  - Actual Result: Computed classification report and confusion matrix, saved `checkpoints/evaluation_report.json` (exit code 0).
-- [x] Test sample image inference:
-  - Command: `.\.venv\Scripts\python src/predict.py --image data/eurosat/Dataset/Forest_1.jpg`
-  - Actual Result: Prediction executed cleanly with top-k confidence outputs (exit code 0).
+## ~~Phase 2–4: PyTorch Classifier Pipeline (REMOVED)~~
 
-## Phase 3: Audit Resolutions Verification
-- [x] Verify CUDA GPU detection:
-  - Command: `.\.venv\Scripts\python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"`
-  - Actual Result: `CUDA: True | Device: NVIDIA GeForce RTX 3050 6GB Laptop GPU` (exit code 0).
-- [x] Verify dataset stratified subsets and 224x224 transforms:
-  - Command: `.\.venv\Scripts\python src/dataset.py`
-  - Actual Result: `Batch shape [16, 3, 224, 224]`, self-test PASSED with all 10 classes (exit code 0).
-- [x] Verify class-weighted smoke training with quiet device logging:
-  - Command: `.\.venv\Scripts\python src/train.py --epochs 1 --smoke-test`
-  - Actual Result: Trained in 5.5s on RTX 3050. Train Acc: 53.55%, Val Acc: 75.13% with class weights. Checkpoint saved to `checkpoints/best_model.pth` (exit code 0).
-- [x] Verify quiet single-image prediction:
-  - Command: `.\.venv\Scripts\python src/predict.py --image data/eurosat/Dataset/Forest_1.jpg`
-  - Actual Result: Top-1 predicted `Forest (38.63%)`, clean output without duplicate device logs (exit code 0).
-- [x] Verify full 10-class evaluation with balanced support:
-  - Command: `.\.venv\Scripts\python src/evaluate.py --smoke-test`
-  - Actual Result: Overall Accuracy: 77.42% across all 10 classes (Pasture F1: 0.86, SeaLake Precision: 1.00) (exit code 0).
-
-## Phase 4: Full Multi-Epoch GPU Training & Evaluation
-- [x] Train 5 full epochs on entire 27,000 EuroSAT dataset:
-  - Command: `.\.venv\Scripts\python src/train.py --epochs 5 --batch-size 64 --lr 1e-4`
-  - Actual Result: Completed 5 epochs in 10.68 minutes. Best Val Acc: 98.35%. Saved `checkpoints/best_model.pth` (exit code 0).
-- [x] Evaluate on all 4,050 unseen test satellite images:
-  - Command: `.\.venv\Scripts\python src/evaluate.py`
-  - Actual Result: **Overall Accuracy: 98.62%**, Macro F1: 0.99 across all 10 classes. Saved `checkpoints/evaluation_report.json` (exit code 0).
-- [x] Single-image confidence predictions on trained weights:
-  - Command: `.\.venv\Scripts\python src/predict.py --image data/eurosat/Dataset/Forest_1.jpg` -> `Forest (99.96%)`
-  - Command: `.\.venv\Scripts\python src/predict.py --image data/eurosat/Dataset/SeaLake_1.jpg` -> `SeaLake (99.99%)`
-  - Command: `.\.venv\Scripts\python src/predict.py --image data/eurosat/Dataset/Residential_1.jpg` -> `Residential (99.92%)`
+> **Note**: Phases 2–4 tested the original ResNet-18 classification pipeline
+> which was replaced by the SRCNN super-resolution pipeline on 2026-09-08.
+> These phases are no longer testable with the current codebase. Historical
+> results are preserved in `ai-docs/tracking/classification-pipeline.md`.
 
 ## Phase 5: Localhost Full-Stack Serving
 - [x] Verify Backend Health & CUDA Acceleration:
@@ -97,8 +55,26 @@ Concrete commands to run and expected output, checked before any change counts a
 ## Phase 6: Codebase Remediation & Test Suite
 - [x] Verify Frontend Build Integrity:
   - Command: `npm run build` (in `frontend/`)
-  - Actual Result: `tsc -b && vite build` passed in 771ms with 0 errors (exit code 0).
+  - Actual Result: `tsc -b && vite build` passed in 588ms with 0 errors (exit code 0).
 - [x] Verify Pytest Unit Test Suite:
   - Command: `.\.venv\Scripts\python.exe -m pytest -v`
-  - Actual Result: 10 passed in 9.04s (`test_dataset.py` 4 passed, `test_model.py` 4 passed, `test_train.py` 2 passed) (exit code 0).
+  - Actual Result: 21 passed in 13.89s (exit code 0):
+    - `test_dataset.py`: 4 passed (shapes, ranges, lengths, error handling)
+    - `test_model.py`: 4 passed (CPU factory, param count, 64x64, arbitrary dimensions)
+    - `test_train.py`: 2 passed (single training step, 1-epoch pipeline smoke)
+    - `test_evaluate.py`: 3 passed (PSNR identical inf, PSNR 20 dB formula, evaluate_model report)
+    - `test_predict.py`: 1 passed (enhance_image smoke test)
+    - `test_server.py`: 7 passed (super-resolution, dimension guard, job eviction, health, CORS, 404, enhance+downloads)
+
+## Phase 7: Deep Audit Remediation & Full E2E Browser Verification
+- [x] Complete Audit Remediation:
+  - Addressed all 35 findings (6 Critical, 8 High, 12 Medium, 9 Low).
+  - CPU-safe GradScaler/autocast, 100MB upload limit, 4096px image dimension limit, 1h job TTL eviction, restricted CORS, relative proxy API URLs, lossless PIL 90° rotation, cleaned unused dependencies.
+- [x] Live Full-Stack End-to-End Browser Test:
+  - Verified on `http://localhost:5173/` and `http://localhost:8000`:
+    - HomePage (`/`): Headline, stats, feature cards load cleanly with 0 console errors.
+    - How It Works (`/how-it-works`): 4-step pipeline cards and REST API endpoints table verified.
+    - Enhance (`/enhance`): RGB-only mode, 4x scale, sample tile selection, live processing stepper.
+    - Results (`/results`): Interactive Before/After split comparison slider, zoom controls, metrics card, and PNG/TIFF attachment downloads verified.
+
 

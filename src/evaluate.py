@@ -2,8 +2,6 @@
 
 Computes PSNR (Peak Signal-to-Noise Ratio) on a validation set of
 (degraded, HR) pairs. PSNR > 30 dB at ×2 scale is a reasonable target.
-
-Replaces the old classification evaluation (confusion matrix, F1, accuracy).
 """
 
 import argparse
@@ -87,7 +85,10 @@ def evaluate_model(
             lr_img = lr_img.to(device, non_blocking=True)
             hr_img = hr_img.to(device, non_blocking=True)
 
-            with autocast('cuda'):
+            if device.type == "cuda":
+                with autocast('cuda'):
+                    pred = model(lr_img)
+            else:
                 pred = model(lr_img)
             # Clamp to valid pixel range for fair PSNR comparison
             pred = pred.clamp(0, 1).float()
