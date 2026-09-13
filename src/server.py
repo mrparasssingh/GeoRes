@@ -269,11 +269,13 @@ class GeoResAPIHandler(BaseHTTPRequestHandler):
                         name = part.get_param("name", header="Content-Disposition")
                         if name == "file":
                             filename = part.get_filename() or "uploaded_satellite.png"
+                            # pyrefly: ignore [bad-assignment]
                             file_bytes = part.get_payload(decode=True)
                         elif name == "scale":
                             raw_scale = part.get_payload(decode=True)
                             if raw_scale:
                                 try:
+                                    # pyrefly: ignore [missing-attribute]
                                     scale_val = int(raw_scale.decode("utf-8").strip())
                                 except (ValueError, UnicodeDecodeError):
                                     pass
