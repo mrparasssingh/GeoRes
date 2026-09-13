@@ -1,31 +1,20 @@
 import { Link } from 'react-router-dom'
-import { useEffect, useRef } from 'react'
-import { Zap, ArrowRight, Layers, Database, Upload, Cpu, MapPin, Satellite, ScanSearch } from 'lucide-react'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-
-// Fix default marker icon paths for Vite
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-delete (L.Icon.Default.prototype as any)._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-})
+import { Zap, ArrowRight, Layers, Database, Upload, Cpu, Satellite, ScanSearch } from 'lucide-react'
+import HeroMapViewer from '../components/HeroMapViewer'
 
 const features = [
   {
-    icon: <Zap size={22} style={{ color: '#0d9490' }} />,
+    icon: <Zap size={22} style={{ color: '#0f766e' }} />,
     title: '4× Spatial Enhancement',
     desc: 'Upscale medium-resolution imagery by 4× using an SRCNN 3-layer convolutional network trained on EuroSAT satellite imagery.',
   },
   {
-    icon: <Database size={22} style={{ color: '#0d9490' }} />,
+    icon: <Database size={22} style={{ color: '#0f766e' }} />,
     title: 'TIFF Export',
     desc: 'Enhanced images are exported as both PNG and TIFF formats for downstream GIS tool compatibility.',
   },
   {
-    icon: <Layers size={22} style={{ color: '#0d9490' }} />,
+    icon: <Layers size={22} style={{ color: '#0f766e' }} />,
     title: 'Convolutional Sharpening',
     desc: 'Applies a 3-layer CNN to sharpen the bicubic-upsampled image directly without tiling artifacts.',
   },
@@ -37,8 +26,8 @@ const steps = [
     title: 'Upload',
     desc: 'Upload a medium-resolution satellite image in GeoTIFF, PNG or JPG format.',
     icon: <Upload size={26} />,
-    color: '#2563eb',
-    glow: 'rgba(37,99,235,0.18)',
+    color: '#60a5fa',
+    glow: 'rgba(96,165,250,0.18)',
     gradient: 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)',
   },
   {
@@ -46,8 +35,8 @@ const steps = [
     title: 'Enhance',
     desc: 'The deep learning pipeline tiles, enhances and reconstructs the image at 4× spatial resolution.',
     icon: <Cpu size={26} />,
-    color: '#0d9490',
-    glow: 'rgba(13,148,144,0.18)',
+    color: '#2dd4bf',
+    glow: 'rgba(45,212,191,0.18)',
     gradient: 'linear-gradient(135deg, #0f7572 0%, #14b8b0 100%)',
   },
   {
@@ -55,48 +44,13 @@ const steps = [
     title: 'Analyze',
     desc: 'Compare original and enhanced imagery side-by-side and download the result.',
     icon: <ScanSearch size={26} />,
-    color: '#7c3aed',
-    glow: 'rgba(124,58,237,0.18)',
+    color: '#c084fc',
+    glow: 'rgba(192,132,252,0.18)',
     gradient: 'linear-gradient(135deg, #6d28d9 0%, #a78bfa 100%)',
   },
 ]
 
 export default function HomePage() {
-  const mapRef = useRef<HTMLDivElement>(null)
-  const mapInstance = useRef<L.Map | null>(null)
-
-  useEffect(() => {
-    if (!mapRef.current || mapInstance.current) return
-
-    const map = L.map(mapRef.current, {
-      center: [20.5937, 78.9629],
-      zoom: 5,
-      zoomControl: true,
-      attributionControl: true,
-    })
-
-    L.tileLayer(
-      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      {
-        attribution: '© ESRI World Imagery',
-        maxZoom: 17,
-      }
-    ).addTo(map)
-
-    L.marker([12.9716, 77.5946])
-      .addTo(map)
-      .bindPopup(
-        '<b>ISRO HQ</b><br/>Bengaluru, India<br/><small>Sample enhancement region</small>',
-        { maxWidth: 200 }
-      )
-
-    mapInstance.current = map
-    return () => {
-      map.remove()
-      mapInstance.current = null
-    }
-  }, [])
-
   return (
     <div className="pt-16 min-h-screen bg-hero">
 
@@ -139,43 +93,9 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Map visual */}
+        {/* Deferred, non-blocking Hero Map */}
         <div className="max-w-3xl mx-auto mt-16 px-4">
-          <div
-            className="relative rounded-2xl overflow-hidden"
-            style={{
-              boxShadow: '0 24px 64px rgba(15,18,51,0.18)',
-              border: '1.5px solid rgba(255,255,255,0.6)',
-            }}
-          >
-            <div ref={mapRef} style={{ height: 340, width: '100%', zIndex: 1 }} id="hero-map" />
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{ zIndex: 2, background: 'linear-gradient(180deg, transparent 80%, rgba(13,148,144,0.15) 100%)' }}
-            />
-
-            {/* Top bar */}
-            <div
-              className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 py-2.5 z-10"
-              style={{ background: 'rgba(15,18,51,0.75)', backdropFilter: 'blur(8px)' }}
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-xs font-mono text-white/80">SATELLITE VIEW</span>
-              </div>
-              <span className="text-xs font-mono text-white/60">Sentinel-2 · 10 m/px</span>
-            </div>
-
-            {/* Bottom bar */}
-            <div
-              className="absolute bottom-0 left-0 right-0 flex items-center gap-4 px-4 py-2 z-10"
-              style={{ background: 'rgba(15,18,51,0.6)', backdropFilter: 'blur(4px)' }}
-            >
-              <MapPin size={12} className="text-teal-400" />
-              <span className="text-xs font-mono text-white/70">India Region · EPSG:4326</span>
-              <span className="text-xs font-mono text-white/40 ml-auto">SRCNN Enhancement Ready</span>
-            </div>
-          </div>
+          <HeroMapViewer />
         </div>
       </section>
 
@@ -185,7 +105,7 @@ export default function HomePage() {
           <div className="text-center mb-14">
             <p
               className="text-xs font-bold uppercase tracking-widest mb-3"
-              style={{ color: '#0d9490' }}
+              style={{ color: '#2dd4bf' }}
             >
               How It Works
             </p>
@@ -228,10 +148,11 @@ export default function HomePage() {
                   el.style.boxShadow = 'none'
                 }}
               >
-                {/* Step number (subtle) */}
+                {/* Step number (subtle background decoration) */}
                 <span
                   className="absolute top-5 right-6 font-black font-mono text-5xl leading-none select-none"
-                  style={{ color: 'rgba(255,255,255,0.04)' }}
+                  style={{ color: 'rgba(255,255,255,0.06)' }}
+                  aria-hidden="true"
                 >
                   {step.num}
                 </span>
@@ -264,7 +185,7 @@ export default function HomePage() {
 
                 <p
                   className="text-sm leading-relaxed"
-                  style={{ color: 'rgba(255,255,255,0.55)' }}
+                  style={{ color: 'rgba(255,255,255,0.75)' }}
                 >
                   {step.desc}
                 </p>
@@ -293,7 +214,7 @@ export default function HomePage() {
                   {f.icon}
                 </div>
                 <h3 className="font-bold text-base mb-2" style={{ color: '#0f1233' }}>{f.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#6b7280' }}>{f.desc}</p>
+                <p className="text-sm leading-relaxed" style={{ color: '#334155' }}>{f.desc}</p>
               </div>
             ))}
           </div>
@@ -308,7 +229,7 @@ export default function HomePage() {
             <h2 className="text-3xl font-bold mb-4" style={{ color: '#0f1233', letterSpacing: '-0.02em' }}>
               Making Satellite Data More Useful
             </h2>
-            <p className="text-base max-w-xl mx-auto" style={{ color: '#6b7280' }}>
+            <p className="text-base max-w-xl mx-auto" style={{ color: '#334155' }}>
               Enhance freely available medium-resolution imagery so analysts can inspect finer
               spatial details without depending entirely on expensive commercial high-resolution imagery.
             </p>
@@ -337,10 +258,10 @@ export default function HomePage() {
       <footer className="py-10 px-4 border-t" style={{ borderColor: 'rgba(15,18,51,0.07)' }}>
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <Satellite size={16} style={{ color: '#0d9490' }} />
+            <Satellite size={16} style={{ color: '#0f766e' }} />
             <span className="font-bold" style={{ color: '#0f1233' }}>GeoSRM</span>
           </div>
-          <p className="text-xs text-center" style={{ color: '#9ca3af' }}>
+          <p className="text-xs text-center" style={{ color: '#475569' }}>
             © 2026 GeoSRM · Smart India Hackathon · Team 404 Brain Not Found
           </p>
         </div>

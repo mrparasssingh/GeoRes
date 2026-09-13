@@ -1,0 +1,19 @@
+# GeoSRM - Satellite Super-Resolution
+
+> AI-powered deep learning super-resolution mapping for medium-resolution satellite imagery (Sentinel-2 EuroSAT). Built by Team 404 Brain Not Found for Smart India Hackathon 2026.
+
+## Overview
+GeoSRM is a geospatial application that enhances medium-resolution satellite images (e.g. 10m/pixel Sentinel-2 imagery) using an SRCNN (Super-Resolution Convolutional Neural Network) PyTorch model with GPU acceleration.
+
+## Features
+- **4x Spatial Resolution Enhancement**: Enhances fine surface features, building outlines, roads, and agricultural field boundaries.
+- **TIFF & PNG Export**: Preserves raster formats for downstream GIS workflows in QGIS and ArcGIS.
+- **Side-by-Side Comparison**: Interactive split slider for before/after visual verification.
+- **Local PyTorch API**: Zero-dependency multithreaded REST server with CUDA RTX acceleration and CPU fallback.
+
+## Key Links
+- [Application Home](http://localhost:5173/)
+- [Enhance Satellite Image](http://localhost:5173/enhance)
+- [Results Viewer](http://localhost:5173/results)
+- [How GeoSRM Works](http://localhost:5173/how-it-works)
+- [Source Repository](https://github.com/mrparasssingh/GeoRes)

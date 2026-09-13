@@ -50,7 +50,7 @@ export default function HowItWorksPage() {
           <h1 className="text-3xl font-bold mb-3" style={{ color: '#0f1233', letterSpacing: '-0.02em' }}>
             How GeoSRM Works
           </h1>
-          <p className="text-base max-w-xl mx-auto" style={{ color: '#6b7280' }}>
+          <p className="text-base max-w-xl mx-auto" style={{ color: '#334155' }}>
             A deep learning pipeline that transforms medium-resolution satellite imagery into
             high-detail enhanced outputs — preserving all geospatial metadata.
           </p>
@@ -65,20 +65,20 @@ export default function HowItWorksPage() {
                 <div
                   className="w-full card px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-2 hover:shadow-lg transition-shadow"
                   style={{
-                    borderLeft: i === 3 ? '4px solid #0d9490' : '4px solid transparent',
+                    borderLeft: i === 3 ? '4px solid #0f766e' : '4px solid transparent',
                   }}
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <span
                         className="text-xs font-bold font-mono"
-                        style={{ color: 'rgba(13,148,144,0.6)' }}
+                        style={{ color: '#0f766e' }}
                       >
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       <p className="font-semibold text-sm" style={{ color: '#0f1233' }}>{step.label}</p>
                     </div>
-                    <p className="text-xs mt-0.5 ml-7" style={{ color: '#9ca3af' }}>{step.sub}</p>
+                    <p className="text-xs mt-0.5 ml-7" style={{ color: '#475569' }}>{step.sub}</p>
                   </div>
                   {i === 3 && (
                     <span className="badge badge-teal self-start sm:self-center flex-shrink-0">Core AI</span>
@@ -86,7 +86,7 @@ export default function HowItWorksPage() {
                 </div>
                 {i < pipelineSteps.length - 1 && (
                   <div className="flex flex-col items-center py-1">
-                    <ArrowDown size={18} style={{ color: '#0d9490', opacity: 0.5 }} />
+                    <ArrowDown size={18} style={{ color: '#0f766e', opacity: 0.8 }} />
                   </div>
                 )}
               </div>
@@ -114,7 +114,7 @@ export default function HowItWorksPage() {
                     </span>
                   </div>
                 </div>
-                <p className="text-sm leading-relaxed" style={{ color: '#6b7280' }}>{t.desc}</p>
+                <p className="text-sm leading-relaxed" style={{ color: '#334155' }}>{t.desc}</p>
               </div>
             ))}
           </div>
@@ -145,7 +145,7 @@ export default function HowItWorksPage() {
                       <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: group.color }} />
                       {item}
                       {item.includes('planned') && (
-                        <span className="ml-auto text-xs" style={{ color: '#d97706' }}>planned</span>
+                        <span className="ml-auto text-xs" style={{ color: '#b45309' }}>planned</span>
                       )}
                     </div>
                   ))}
@@ -153,7 +153,7 @@ export default function HowItWorksPage() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-center mt-4" style={{ color: '#9ca3af' }}>
+          <p className="text-xs text-center mt-4" style={{ color: '#475569' }}>
             Technologies marked "planned" are part of the project architecture but not yet deployed in the current demo.
           </p>
         </section>
@@ -173,7 +173,7 @@ export default function HowItWorksPage() {
                   <span
                     className="font-mono text-xs font-bold px-2 py-1 rounded-lg flex-shrink-0"
                     style={{
-                      background: ep.method === 'POST' ? '#0d9490' : '#1e2461',
+                      background: ep.method === 'POST' ? '#0f766e' : '#1e2461',
                       color: 'white',
                     }}
                   >
@@ -181,7 +181,7 @@ export default function HowItWorksPage() {
                   </span>
                   <div>
                     <p className="font-mono text-xs font-semibold" style={{ color: '#0f1233' }}>{ep.path}</p>
-                    <p className="text-xs mt-0.5" style={{ color: '#6b7280' }}>{ep.desc}</p>
+                    <p className="text-xs mt-0.5" style={{ color: '#334155' }}>{ep.desc}</p>
                   </div>
                 </div>
               ))}

@@ -1,0 +1,12 @@
+{
+  "name": "geores",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GeoRes - AI-powered super-resolution mapping for satellite imagery",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "preview": "npm --prefix frontend run preview",
+    "lint": "npm --prefix frontend run lint"
+  }
+}

@@ -51,7 +51,7 @@ export default function Navbar() {
               <div className="font-bold text-lg leading-tight" style={{ color: '#0f1233', letterSpacing: '-0.02em' }}>
                 GeoSRM
               </div>
-              <div className="text-xs leading-tight" style={{ color: '#0d9490', fontWeight: 500 }}>
+              <div className="text-xs leading-tight" style={{ color: '#0f766e', fontWeight: 600 }}>
                 AI Super-Resolution
               </div>
             </div>
@@ -65,8 +65,8 @@ export default function Navbar() {
                 to={link.to}
                 className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150"
                 style={{
-                  color: location.pathname === link.to ? '#0d9490' : '#4a5568',
-                  background: location.pathname === link.to ? 'rgba(13,148,144,0.08)' : 'transparent',
+                  color: location.pathname === link.to ? '#0f766e' : '#334155',
+                  background: location.pathname === link.to ? 'rgba(15,118,110,0.1)' : 'transparent',
                 }}
               >
                 {link.label}
@@ -111,8 +111,8 @@ export default function Navbar() {
                 to={link.to}
                 className="px-4 py-3 rounded-lg text-sm font-medium transition-all"
                 style={{
-                  color: location.pathname === link.to ? '#0d9490' : '#4a5568',
-                  background: location.pathname === link.to ? 'rgba(13,148,144,0.08)' : 'transparent',
+                  color: location.pathname === link.to ? '#0f766e' : '#334155',
+                  background: location.pathname === link.to ? 'rgba(15,118,110,0.1)' : 'transparent',
                 }}
               >
                 {link.label}
